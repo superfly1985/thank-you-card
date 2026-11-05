@@ -131,6 +131,7 @@ def render(spec):
             fit = FIT_RIGHT if i < len(lines) - 1 else None
             rc.write_line(base, X_BODY, ys[i], ln, size=56, fit_right=fit)
     rc.check_mark(base, CAT_X[spec["category"]], 398)
+    os.makedirs(OUT, exist_ok=True)   # 新克隆仓库没有 output/ 目录
     photo = os.path.join(OUT, "card_{}_{}.jpg".format(spec["to"], spec["date"].replace("-", "")))
     base.convert("RGB").save(photo, quality=92)
     print("RENDER:", photo)
