@@ -24,16 +24,34 @@ def make_glyph(ch, size, angle, ink):
     return tmp
 
 
-def write_line(base, x, line_y, text, size=54, ink=(50, 46, 60, 235), jitter=1.0, rise=6):
-    """在横线上写字：line_y=横线y坐标，字底落在横线上方 rise 像素处"""
+def write_line(base, x, line_y, text, size=54, ink=(50, 46, 60, 235), jitter=1.0, rise=6,
+               fit_right=None, stretch_cap=9.0):
+    """在横线上写字：line_y=横线y坐标，字底落在横线上方 rise 像素处。
+    fit_right: 若给定(横线右端x)，自然宽度不足时摊加字间距铺满行宽(每字最多 stretch_cap px)，
+    模拟真实书写把行写到边；超过则不动(不缩字，避免破坏手写感)。"""
     cx = float(x)
+    extra = 0.0
+    if fit_right:
+        f = ImageFont.truetype(FONT_PATH, size)
+        # getbbox/getlength/getmask 对 CJK 都返回版面宽(em宽), 会把 extra 算成 0;
+        # 唯一可信的是画布渲染后裁剪的墨迹宽(悠哉体 em=56 时墨迹仅 ~45)
+        natural = 0.0
+        for ch in text:
+            # 黑底白字: getbbox 算的是非零区域, 白底会把整张画布都算成"墨迹"
+            probe = Image.new("L", (size * 2, size * 2), 0)
+            ImageDraw.Draw(probe).text((10, 10), ch, font=f, fill=255)
+            bb = probe.getbbox()
+            natural += ((bb[2] - bb[0]) * 0.94) if bb else size * 0.5
+        natural += len(text) * size * 0.04
+        gap = fit_right - x - natural - 25  # 留25px收笔余量
+        extra = max(0.0, min(gap / max(1, len(text)), stretch_cap))
     for ch in text:
         sz = max(10, int(size * random.uniform(0.95, 1.05)))
         ang = random.uniform(-3.0, 3.0) * jitter
         dx = random.uniform(-1.5, 1.5) * jitter
         dy = random.uniform(-2.0, 2.0) * jitter
         g = make_glyph(ch, sz, ang, ink)
-        adv = g.width * 0.94 + (sz * 0.04 if not (ch.isascii() and ch.isalnum()) else 0)
+        adv = g.width * 0.94 + (sz * 0.04 if not (ch.isascii() and ch.isalnum()) else 0) + extra
         base.alpha_composite(g, (int(cx + dx), int(line_y - rise - g.height + dy)))
         cx += adv
     return cx
@@ -62,7 +80,9 @@ def main():
                    size=item.get("size", cfg.get("font_size", 54)),
                    ink=tuple(item.get("ink", ink)),
                    jitter=item.get("jitter", 1.0),
-                   rise=item.get("rise", 6))
+                   rise=item.get("rise", 6),
+                   fit_right=item.get("fit_right"),
+                   stretch_cap=item.get("stretch_cap", 9.0))
     for c in cfg.get("checks", []):
         check_mark(base, c["cx"], c["cy"], size=c.get("size", 34), width=c.get("width", 5))
     out = base.convert("RGB")

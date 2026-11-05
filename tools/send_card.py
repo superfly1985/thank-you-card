@@ -65,8 +65,11 @@ def render(spec):
     rc.write_line(base, 565, 342, spec["from_name"], size=52)
     rc.write_line(base, 840, 342, spec["date"].replace("-", "."), size=46)
     for key, ys in SECTION_Y.items():
-        for i, ln in enumerate(spec[key]):
-            rc.write_line(base, X_BODY, ys[i], ln, size=54)
+        lines = spec[key]
+        for i, ln in enumerate(lines):
+            # 方案A: 非末行自适应铺满行宽(铺到横线右端), 段尾行保持自然(与人工书写一致)
+            fit = 1115 if i < len(lines) - 1 else None
+            rc.write_line(base, X_BODY, ys[i], ln, size=56, fit_right=fit)
     rc.check_mark(base, CAT_X[spec["category"]], 398)
     photo = os.path.join(OUT, "card_{}_{}.jpg".format(spec["to"], spec["date"].replace("-", "")))
     base.convert("RGB").save(photo, quality=92)
