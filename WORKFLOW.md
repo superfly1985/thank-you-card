@@ -1,4 +1,10 @@
-# 4C 感谢卡工作流 v0.1（2026-11-05 测试版）
+# 4C 感谢卡工作流 v1.1（2026-11-05 共享打包版）
+
+> 本仓库可直接分享：`git clone` → `python tools/setup_env.py` → `--register` → `login.py` → `--interactive`
+> 详见 README.md。所有路径动态定位（任意克隆位置可用）；子集字体 3.81MB 已入库（GB2312 全汉字 6889 字，缺字用 make_subset.py 补）。
+> 新增坑位：问卷会对未提交草稿弹「继续填写/重新填写」对话框挡住表单——脚本已自动点「重新填写」。
+> 共享版命令：send_card.py `--interactive`(无AI问答) / `--register` / spec 模式；`login.py` 纯 Python 扫码；`setup_env.py` 一键环境。
+> 实测记录：C盘跨目录 dry 全绿、interactive 管道测试全绿、setup_env 4/4、login 已登录路径、register 流程。
 
 ## 业务流程（每次执行按此顺序）
 

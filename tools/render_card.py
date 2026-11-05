@@ -5,8 +5,11 @@
 from PIL import Image, ImageDraw, ImageFont
 import random, json, sys, os
 
-BASE = r"D:\03.其他应用\01.感谢卡\assets\base_card.jpg"
-FONT_PATH = r"C:\Windows\Fonts\STXINGKA.TTF"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # 仓库根(任意克隆位置可用)
+BASE = os.path.join(ROOT, "assets", "base_card.jpg")
+_SUBSET = os.path.join(ROOT, "fonts", "Yozai-Subset.ttf")
+_FULL = os.path.join(ROOT, "fonts", "Yozai-Regular.ttf")
+FONT_PATH = _SUBSET if os.path.exists(_SUBSET) else _FULL
 
 
 def make_glyph(ch, size, angle, ink):

@@ -9,6 +9,11 @@ output/
 .playwright-cli/
 attach_test.yaml
 __pycache__/
+cards_log.jsonl
 
-# 大体积可再下载资源(下载地址见 WORKFLOW.md)
-fonts/
+# 完整版字体体积大不入库(子集字体 Yozai-Subset.ttf 保留入库);
+# 需要重新生成子集时: python tools/make_subset.py --download
+fonts/Yozai-Regular.ttf
+fonts/Xiaolai-Regular.ttf
+fonts/LXGWWenKai-Regular.ttf
+fonts/charset_extra.txt
