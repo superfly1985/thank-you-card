@@ -79,7 +79,7 @@
 
 `python tools/send_card.py <spec.json> [--dry]`（真实跑用后台方式运行，脚本轮询提交、抓成功页）
 
-- spec.json（LLM 每张卡只写这些）：to / category(合规|担当|贡献|关爱) / behaviour[≤2行] / impact[≤2行] / appreciation[≤1行] / date / recipient_dept(问卷选项原文) / product(默认背包)；可选 from_name、issuer_dept、issuer_level、seed
+- spec.json（LLM 每张卡只写这些）：to / category(合规|担当|贡献|关爱) / behaviour[≤2行] / impact[≤2行] / appreciation[≤1行] / date / recipient_dept(问卷选项原文) / product(默认背包)；可选 from_name、issuer_dept、issuer_level、seed、body_size(正文字号，默认52)
   - ⚠️ **分行规则（方案A）**：每段**首行 14–16 字**（写满行宽的关键，悠哉体字形窄，13 字撑不到边），**尾行自然**（人工样张的段尾行本来就留白）；渲染端对非末行自动摊字间距（≤9px/字）铺到横线右端
   - 铺行调试教训：PIL 的 `getbbox`/`getlength`/`getmask` 对 CJK 返回的都是**字幅框**(em宽≈56)，不是墨迹宽(实际仅~45)；且探针画布必须**黑底白字**（白底时 getbbox 把整张画布当非零区）。墨迹宽唯一可信来源 = 画布渲染后裁剪
 - 脚本内部：渲染卡图（坐标/勾选位映射硬编码：担当633/贡献810/合规453/关爱986）→ 开 headed Edge（`.edge-profile` 持久档 + auth_state.json cookies）→ 登录检查(跳登录页则退出码2) → 预填全部字段 → **日期控件选择**（today-cell 策略）→ 上传照片 → DOM 读回核验（文字报告，替代视觉看图）→ 整页截图 → 轮询等用户点提交（检测"提交成功"等文案）→ 抓成功页 → 记 cards_log.jsonl → 退出
@@ -89,6 +89,7 @@
 - dry 模式：跳过上传与提交等待，用于验证管线
 - **核验环节已放宽（2026-11-05 实战坑）**：用户可能在脚本核验前就手快点提交 → 页面跳成功页、表单 DOM 消失 → `input[type=text]` 读空 IndexError 退出码 3。已修复：`tx(i)` 占位 + WARN 打印，核验失败不再中断，脚本继续进入监听；若页面已在成功页则自动检测"提交成功"→ 截图 + 记账 + 退出 0。
 - **闭环信号（2026-11-05 用户确认）**：Edge 窗口自动关闭（或成功页出现）= 提交闭环。AI 监控到窗口消失即汇报，不再追问。
+- **正文字号定版 52（2026-11-05）**：用户反馈 56"上下有点满"，经 54/52 两轮样张 + 换 seed 复测后定版 52（send_card.py 默认值，spec 可用 body_size 覆盖）；表头行（To 58 / From 52 / 日期 46）不变。对比样张存档 output/card_王晟楠_20261105_size56.jpg、_size54.jpg。
 
 ## playwright-cli 直操作备援（脚本失效时的人工兜底路线）
 
