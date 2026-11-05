@@ -235,13 +235,19 @@ def run_browser(spec, photo, dry):
                     return r["label"]
             return "(空)"
 
+        def tx(i):
+            return st["texts"][i] if i < len(st["texts"]) else "(读取失败:页面可能已提交/跳转)"
+
+        if not st["texts"]:
+            print("WARN: 表单文本框读取为空(可能用户已点提交), 放宽核验继续监听")
+
         report = [
             ("01 发卡人部门", checked_in(rs[0:11]), spec["issuer_dept"]),
             ("02 发卡人职级", checked_in(rs[11:14]), spec["issuer_level"]),
-            ("03 发卡人姓名", st["texts"][0], spec["from_name"]),
+            ("03 发卡人姓名", tx(0), spec["from_name"]),
             ("04 收卡人部门", checked_in(rs[14:25]), spec["recipient_dept"]),
-            ("05 收卡人姓名", st["texts"][1], spec["to"]),
-            ("06 送卡日期", st["texts"][2], spec["date"]),
+            ("05 收卡人姓名", tx(1), spec["to"]),
+            ("06 送卡日期", tx(2), spec["date"]),
             ("07 照片", (st["file"] or "").split("\\")[-1], photo.split("\\")[-1] if not dry else "(dry跳过)"),
             ("08 文创产品", spec["product"], spec["product"]),
         ]
