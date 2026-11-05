@@ -1,0 +1,14 @@
+# 隐私与敏感
+auth_state.json
+.edge-profile/
+.workbuddy/
+
+# 生成物
+output/
+*.png
+.playwright-cli/
+attach_test.yaml
+__pycache__/
+
+# 大体积可再下载资源(下载地址见 WORKFLOW.md)
+fonts/
