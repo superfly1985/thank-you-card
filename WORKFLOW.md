@@ -4,6 +4,7 @@
 > 详见 README.md。所有路径动态定位（任意克隆位置可用）；子集字体 3.81MB 已入库（GB2312 全汉字 6889 字，缺字用 make_subset.py 补）。
 > 新增坑位：问卷会对未提交草稿弹「继续填写/重新填写」对话框挡住表单——脚本已自动点「重新填写」。
 > 共享版命令：send_card.py `--interactive`(无AI问答) / `--register` / spec 模式；`login.py` 纯 Python 扫码；`setup_env.py` 一键环境。
+> **分发决策（2026-11-05）**：维持源码分发 + setup_env 自动装环境（否决 PyInstaller exe 打包——50-80MB/杀软误报/每改必重打包；若未来要发给无法装 Python 的机器再上 exe 路线：`pyinstaller --collect-all playwright`）。
 > 实测记录：C盘跨目录 dry 全绿、interactive 管道测试全绿、setup_env 4/4、login 已登录路径、register 流程。
 
 ## 业务流程（每次执行按此顺序）
