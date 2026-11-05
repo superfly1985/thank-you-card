@@ -75,7 +75,12 @@ python tools/send_card.py spec.json    # ④ 生成卡（或 --interactive 由�
 - `fonts/Yozai-Subset.ttf` 悠哉体精简子集（OFL 开源，可商用）
 - `assets/` 卡面底图；`output/` 生成物（不入库）；`cards_log.jsonl` 提交记录
 
-## 隐私
+## 说明（国内访问与隐私）
 
 - `auth_state.json` / `.edge-profile/` / `output/` 均已 gitignore，**不会**上传登录凭据
-- `assets/` 含公司卡面照片，**请将本仓库保持为 Private**
+- `assets/` 卡面照片仅供公司内部 4C 活动使用，仓库公开无妨
+- **国内克隆加速**（github 直连慢/失败时）：
+  ```bash
+  git clone https://ghfast.top/https://github.com/superfly1985/thank-you-card.git
+  ```
+- 依赖安装默认走清华 PyPI 镜像（国内直连），失败自动回退官方源；字体子集已入库无需额外下载
