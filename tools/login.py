@@ -51,7 +51,9 @@ def main():
             pass
 
         print("请在弹出的窗口中扫码登录（微信/QQ），最长等待 10 分钟...")
+        print("(二维码约1-2分钟过期, 脚本每50秒自动刷新页面取新码并重新勾选协议; 也可扫 output/login_qr.png 里的最新码)")
         deadline = time.time() + 600
+        last_refresh = time.time()
         while time.time() < deadline:
             time.sleep(4)
             url = page.url
@@ -62,6 +64,18 @@ def main():
                 print("STATE_SAVED:", STATE)
                 ctx.close()
                 return
+            if time.time() - last_refresh > 50:
+                try:  # 二维码过期前刷新, 拿新码并重新勾选协议
+                    page.reload(wait_until="domcontentloaded")
+                    page.wait_for_timeout(4000)
+                    page.evaluate(
+                        "() => { const c = document.querySelector('input[type=checkbox]');"
+                        " if (c && !c.checked) c.click(); }")
+                    page.screenshot(path=QR)
+                    print("QR_REFRESHED:", QR)
+                except Exception:
+                    pass
+                last_refresh = time.time()
         print("TIMEOUT: 10 分钟未检测到登录, 请重跑本命令")
         ctx.close()
         sys.exit(2)
